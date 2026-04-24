@@ -1,8 +1,9 @@
 import { useTasks } from "../hooks/useTasks";
 import { TaskList } from "../components/TaskList";
+import { AddTaskForm } from "../components/AddTaskForm";
 
 export const TasksPage = () => {
-  const { tasks, loading, error, handleDelete  } = useTasks();
+  const { tasks, loading, error, handleDelete ,handleCreate } = useTasks();
 
   if (loading)
     return (
@@ -28,6 +29,7 @@ export const TasksPage = () => {
         <h1 className="text-4xl font-bold mb-8 text-gray-800">
           📋 Tasks
         </h1>
+        <AddTaskForm onCreate={handleCreate} />
 
         <TaskList tasks={tasks} onDelete={handleDelete} />
       </div>

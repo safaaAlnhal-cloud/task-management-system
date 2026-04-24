@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { fetchTasks } from '../api/tasks';
-import { deleteTask } from "../api/tasks";
+import { fetchTasks,createTask,deleteTask } from '../api/tasks';
+
 
 export const useTasks = () => {
   const [tasks, setTasks] = useState<any[]>([]);
@@ -32,5 +32,20 @@ export const useTasks = () => {
   }
 };
 
-  return { tasks, loading, error, handleDelete};
+const handleCreate = async (data: {
+  title: string;
+  description: string;
+  priority: "low" | "medium" | "high";
+  dueDate: string;
+}) => {
+  try {
+    const newTask = await createTask(data);
+
+    setTasks((prev) => [newTask, ...prev]);
+  } catch (err) {
+    console.error("Create failed");
+  }
+}; 
+
+  return { tasks, loading, error, handleDelete, handleCreate};
 };

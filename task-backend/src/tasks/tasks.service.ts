@@ -8,6 +8,7 @@ import { GetTasksDto } from './dto/get-tasks.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { UpdateTaskStatusDto } from './dto/update-task-status.dto';
 import { ActivityLogService } from 'src/activity-log/activity-log.service';
+import { TaskUtils } from './task.utils';
 @Injectable()
 export class TasksService {
   private readonly logger = new Logger(TasksService.name);
@@ -29,7 +30,11 @@ export class TasksService {
        'create_task',
         'Task',
         savedTask.id,
-        dto,
+       {
+        title: savedTask.title,
+        priority: savedTask.priority,
+        dueDate: savedTask.dueDate,
+       },
       );
 
       
@@ -55,19 +60,15 @@ export class TasksService {
   }
 
 async findAll(query: GetTasksDto) {
-  try {
     const { limit = 10, offset = 0, status ,search} = query;
-
     this.logger.log(
       `Fetching tasks |search=${search} limit=${limit} offset=${offset} status=${status}`,
     );
-
     const qb = this.taskRepo.createQueryBuilder('task');
 
     if (status) {
       qb.andWhere('task.status = :status', { status });
     }
-
     if (search) {
      qb.andWhere('task.title ILIKE :search', {
         search: `%${search}%`,
@@ -76,21 +77,27 @@ async findAll(query: GetTasksDto) {
     qb.take(limit);
     qb.skip(offset);
 
-    const tasks = await qb.getMany();
+    const [tasks, total] = await qb.getManyAndCount();
 
-    this.logger.log(`Fetched ${tasks.length} tasks`);
+     this.logger.log(`Fetched ${tasks.length} tasks`);
 
-    return tasks;
-
-  } catch (error) {
-    this.logger.error('Failed to fetch tasks', error);
-    throw error;
-  }
+    const enrichedTasks = tasks.map(task => ({
+     ...task,
+      isOverdue: TaskUtils.isOverdue(task),
+      isHighPriority: TaskUtils.isHighPriority(task),
+      isCompletedOnTime: TaskUtils.isCompletedOnTime(task),
+    }));
+return {
+  data: enrichedTasks,
+  meta: {
+    total,
+    limit,
+    offset,
+  },
+};
 }
-
-
 async findOne(id: number) {
-  try {
+  
     this.logger.log(`Fetching task with id=${id}`);
 
     const task = await this.taskRepo.findOne({
@@ -101,19 +108,18 @@ async findOne(id: number) {
       this.logger.warn(`Task not found id=${id}`);
       throw new NotFoundException('Task not found');
     }
-
     this.logger.log(`Task found id=${id}`);
-
-    return task;
-
-  } catch (error) {
-    this.logger.error(`Error fetching task id=${id}`, error);
-    throw error;
-  }
+    
+    return {
+    ...task,
+    isOverdue: TaskUtils.isOverdue(task),
+    isHighPriority: TaskUtils.isHighPriority(task),
+    isCompletedOnTime: TaskUtils.isCompletedOnTime(task),
+  };
 }
 
 async update(id: number, dto: UpdateTaskDto) {
-  try {
+  
     this.logger.log(`Updating task id=${id}`);
     const task = await this.taskRepo.findOne({
       where: { id },
@@ -123,6 +129,7 @@ async update(id: number, dto: UpdateTaskDto) {
       this.logger.warn(`Task not found id=${id}`);
       throw new NotFoundException('Task not found');
     }
+    const before = { ...task };
     const updatedTask = Object.assign(task, dto);
     const saved = await this.taskRepo.save(updatedTask);
 
@@ -130,21 +137,18 @@ async update(id: number, dto: UpdateTaskDto) {
      'update_task',
      'Task',
       saved.id,
-      dto,
+      {
+       before,
+       after: saved,
+      },
       );
     this.logger.log(`Task updated id=${id}`);
 
     return saved;
 
-  } catch (error) {
-    this.logger.error(`Failed to update task id=${id}`, error);
-    throw error;
-  }
-
-}
+  } 
 
 async remove(id: number) {
-  try {
     this.logger.log(`Deleting task id=${id}`);
 
     const task = await this.taskRepo.findOne({
@@ -162,21 +166,17 @@ async remove(id: number) {
       'delete_task',
       'Task',
       id,
+      {
+          deletedAt: new Date().toISOString(),
+      },
      );
 
     this.logger.log(`Task deleted id=${id}`);
 
     return { message: 'Task deleted successfully' };
 
-  } catch (error) {
-    this.logger.error(`Failed to delete task id=${id}`, error);
-    throw error;
-  }
-}
-
-
+  } 
 async updateStatus(id: number, dto: UpdateTaskStatusDto) {
-  try {
     this.logger.log(`Updating status for task id=${id}`);
 
     const task = await this.taskRepo.findOne({
@@ -187,7 +187,7 @@ async updateStatus(id: number, dto: UpdateTaskStatusDto) {
       this.logger.warn(`Task not found id=${id}`);
       throw new NotFoundException('Task not found');
     }
-
+    const oldStatus = task.status;
     task.status = dto.status;
 
     const saved = await this.taskRepo.save(task);
@@ -195,16 +195,15 @@ async updateStatus(id: number, dto: UpdateTaskStatusDto) {
        'update_status',
        'Task',
         saved.id,
-        { status: dto.status },
+       {
+        from: oldStatus,
+        to: dto.status,
+       },
       );
 
     this.logger.log(`Task status updated to ${dto.status}`);
 
     return saved;
 
-  } catch (error) {
-    this.logger.error(`Failed to update status for id=${id}`, error);
-    throw error;
-  }
-}
+  } 
 }

@@ -1,83 +1,66 @@
 import { useState } from "react";
 
-type Props = {
-  onCreate: (data: {
-    title: string;
-    description: string;
-    priority: "low" | "medium" | "high";
-    dueDate: string;
-  }) => void;
-};
-
-export const AddTaskForm = ({ onCreate }: Props) => {
+export const AddTaskForm = ({ onCreate }: any) => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [priority, setPriority] =
-    useState<"low" | "medium" | "high">("medium");
-
   const [dueDate, setDueDate] = useState("");
+  const [priority, setPriority] = useState("medium");
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!title.trim()) return;
-
-    onCreate({
+  const handleClick = async () => {
+    await onCreate({
       title,
-      description,
+      description: description || undefined,
       priority,
-      dueDate,
+      dueDate: dueDate || undefined,
     });
-
-    setTitle("");
-    setDescription("");
-    setPriority("medium");
-    setDueDate("");
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-3 mb-6">
+    <div className="bg-white p-6 rounded-2xl shadow-md space-y-4">
+      <h2 className="text-2xl font-bold text-gray-800">Create Task</h2>
 
-      {/* TITLE */}
+      {/* Title */}
       <input
+        className="w-full border p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+        placeholder="Task title"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
-        placeholder="Task title"
-        className="w-full p-2 border rounded"
       />
 
-      {/* DESCRIPTION */}
+      {/* Description */}
       <textarea
+        className="w-full border p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+        placeholder="Task description"
         value={description}
         onChange={(e) => setDescription(e.target.value)}
-        placeholder="Task description"
-        className="w-full p-2 border rounded"
       />
 
-      {/* PRIORITY */}
-      <select
-        value={priority}
-        onChange={(e) =>
-          setPriority(e.target.value as "low" | "medium" | "high")
-        }
-        className="w-full p-2 border rounded"
-      >
-        <option value="low">Low</option>
-        <option value="medium">Medium</option>
-        <option value="high">High</option>
-      </select>
-
-      {/* DUE DATE */}
+      {/* Due Date */}
       <input
         type="date"
+        className="w-full border p-3 rounded-lg"
         value={dueDate}
         onChange={(e) => setDueDate(e.target.value)}
-        className="w-full p-2 border rounded"
       />
 
-      <button className="bg-blue-600 text-white px-4 py-2 rounded">
-        Add Task
+      {/* Priority */}
+      <select
+        className="w-full border p-3 rounded-lg"
+        value={priority}
+        onChange={(e) => setPriority(e.target.value)}
+      >
+        <option value="low">Low Priority</option>
+        <option value="medium">Medium Priority</option>
+        <option value="high">High Priority</option>
+      </select>
+
+      {/* Button */}
+      <button
+        onClick={handleClick}
+        className="w-full bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600 transition"
+      >
+        Create Task
       </button>
-    </form>
+    </div>
   );
 };

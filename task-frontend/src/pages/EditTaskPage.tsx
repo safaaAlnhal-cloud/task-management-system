@@ -1,40 +1,60 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { getTaskById } from "../api/tasks";
 import { useTasks } from "../hooks/useTasks";
-
+import { useTask } from "../hooks/useTask";
+import { taskSchema } from "../validation/task.schema";
 export const EditTaskPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [task, setTask] = useState<any>(null);
+  const { task, loading } = useTask(Number(id));
   const { handleUpdateTask } = useTasks();
   const [dueDate, setDueDate] = useState("");
   const [priority, setPriority] = useState("medium");
+  const [errors, setErrors] = useState<any>({});
+const [saving, setSaving] = useState(false);
 
-  useEffect(() => {
-    const load = async () => {
-      const data = await getTaskById(Number(id));
-      setTask(data);
-      setTitle(data.title);
-      setDescription(data.description || "");
-      setDueDate(data.dueDate || "");
-      setPriority(data.priority || "medium");
-    };
-    load();
-  }, [id]);
-
+useEffect(() => {
+  if (task) {
+    setTitle(task.title);
+    setDescription(task.description || "");
+    setDueDate(task.dueDate || "");
+    setPriority(task.priority || "medium");
+  }
+}, [task]);
   const handleSave = async () => {
-    const payload: any = { title };
+  if (!title.trim()) {
+    setErrors({ title: "Title is required" });
+    return;
+  }
 
-    if (description) payload.description = description;
-    if (dueDate) payload.dueDate = dueDate;
-    if (priority) payload.priority = priority;
+  const result = taskSchema.safeParse({
+    title,
+    description,
+    priority,
+    dueDate,
+  });
 
-    await handleUpdateTask(Number(id), payload);
-    navigate("/tasks");
-  };
+  if (!result.success) {
+    const fieldErrors: any = {};
+
+    result.error.issues.forEach((err) => {
+      const field = err.path[0];
+      fieldErrors[field] = err.message;
+    });
+
+    setErrors(fieldErrors);
+    return;
+  }
+
+  setErrors({});
+  setSaving(true);
+
+  await handleUpdateTask(Number(id), result.data);
+
+  navigate("/tasks");
+};
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4">
@@ -43,13 +63,16 @@ export const EditTaskPage = () => {
         <h1 className="text-2xl font-bold text-gray-800 text-center">
           Edit Task
         </h1>
-
-        <input
-          value={title ?? ""}
-          onChange={(e) => setTitle(e.target.value)}
-          placeholder="Title"
-          className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300"
-        />
+     <input
+      className={`w-full p-2 border rounded ${
+      errors.title ? "border-red-500" : "border-gray-200"
+      }`}
+      value={title}
+      onChange={(e) => setTitle(e.target.value)}
+      />
+       {errors.title && (
+        <p className="text-red-500 text-sm">{errors.title}</p>
+       )}
 
         <textarea
           value={description ?? ""}
@@ -74,13 +97,18 @@ export const EditTaskPage = () => {
           <option value="medium">Medium Priority</option>
           <option value="high">High Priority</option>
         </select>
-
+           
         <button
-          onClick={handleSave}
-          className="bg-gray-800 text-white py-2 rounded-lg font-medium hover:bg-gray-900 transition"
-        >
-          Save Changes
-        </button>
+           disabled={saving}
+            onClick={handleSave}
+         className={`py-2 rounded text-white ${
+           saving
+         ? "bg-gray-400 cursor-not-allowed"
+         : "bg-gray-800 hover:bg-gray-900"
+          }`}
+          >
+          {saving ? "Saving..." : "Save Changes"}
+         </button>
 
       </div>
     </div>

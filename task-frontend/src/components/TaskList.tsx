@@ -1,15 +1,5 @@
 import { useNavigate } from "react-router-dom";
-type Task = {
-  id: number;
-  title: string;
-  description?: string;
-  dueDate?: string;
-  status: "todo" | "in_progress" | "done";
-  isOverdue?: boolean;
-  isHighPriority?: boolean;
-  isCompletedOnTime?: boolean;
-};
-
+import type { Task } from "../types/task.types";
 type Props = {
   tasks: Task[];
   onDelete: (id: number) => void;
@@ -30,6 +20,7 @@ export const TaskList = ({ tasks, onDelete, onUpdateStatus }: Props) => {
       {tasks.map((task) => (
         <div
           key={task.id}
+           onClick={() => navigate(`/tasks/${task.id}`)}
           className={`rounded-xl border p-4 flex flex-col gap-3 hover:shadow-md transition
           ${
             task.isOverdue
@@ -76,6 +67,11 @@ export const TaskList = ({ tasks, onDelete, onUpdateStatus }: Props) => {
                   Overdue
                 </span>
               )}
+{task.isCompletedOnTime && (
+  <span className="text-green-600 font-medium">
+    ✔ On time
+  </span>
+)}
             </div>
 
             {task.dueDate && (
@@ -87,28 +83,28 @@ export const TaskList = ({ tasks, onDelete, onUpdateStatus }: Props) => {
 
           <div className="flex justify-end gap-2 pt-2 border-t">
             <button
-              onClick={() => onUpdateStatus(task.id, "in_progress")}
+              onClick={(e) => {e.stopPropagation();onUpdateStatus(task.id, "in_progress")}}
               className="text-xs px-3 py-1 rounded-md bg-gray-100 hover:bg-gray-200"
             >
               Start
             </button>
 
             <button
-              onClick={() => onUpdateStatus(task.id, "done")}
+              onClick={(e) => {e.stopPropagation();onUpdateStatus(task.id, "done")}}
               className="text-xs px-3 py-1 rounded-md bg-green-100 text-green-600 hover:bg-green-200"
             >
               Done
             </button>
 
             <button
-              onClick={() => onDelete(task.id)}
+              onClick={(e) => {e.stopPropagation();onDelete(task.id);}}
               className="text-xs px-3 py-1 rounded-md bg-red-100 text-red-600 hover:bg-red-200"
             >
               Delete
             </button>
 
             <button
-            onClick={() => navigate(`/edit/${task.id}`)}
+            onClick={(e) => {e.stopPropagation();navigate(`/edit/${task.id}`)}}
             className="text-blue-500 text-xs"
              >
                 Edit

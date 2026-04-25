@@ -20,7 +20,7 @@ export class TaskUtils {
 
     const due = new Date(task.dueDate);
     const updated = new Date(task.updatedAt);
-
+    due.setHours(23, 59, 59, 999);
     return updated <= due;
   }
 }

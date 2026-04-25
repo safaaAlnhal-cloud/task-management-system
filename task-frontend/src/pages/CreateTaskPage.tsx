@@ -7,9 +7,18 @@ export const CreateTaskPage = () => {
   const navigate = useNavigate();
 
   const handleSubmit = async (data: any) => {
-    await handleCreate(data);
+  console.log("before create");
+
+  const success = await handleCreate(data);
+
+  console.log("after create");
+
+  if (success) {
     navigate("/tasks");
-  };
+  } else {
+    console.log("Create failed");
+  }
+};
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4">
@@ -21,7 +30,6 @@ export const CreateTaskPage = () => {
 
         <AddTaskForm
           onCreate={handleSubmit}
-          buttonClass="bg-gray-800 text-white py-2 rounded-lg font-medium hover:bg-gray-900 transition"
         />
 
       </div>

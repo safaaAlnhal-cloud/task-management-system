@@ -93,6 +93,9 @@ async findAll(query: GetTasksDto) {
     }));
 return {
   data: enrichedTasks,
+   total,
+  limit,
+  offset,
 };
 }
 async findOne(id: number) {

@@ -10,8 +10,8 @@ export type CreateTaskPayload = {
 
 const API_URL = 'http://localhost:3000/tasks';
 
-export const fetchTasks = async () => {
-  const response = await axios.get(API_URL);
+export const fetchTasks = async (search?: string, status?: string) => {
+  const response = await axios.get(API_URL, {params:{ search, status, },});
   return response.data.data;
 };
 

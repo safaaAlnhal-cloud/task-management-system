@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export const AddTaskForm = ({ onCreate }: any) => {
+export const AddTaskForm = ({ onCreate, buttonClass }: any) => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [dueDate, setDueDate] = useState("");
@@ -10,42 +10,37 @@ export const AddTaskForm = ({ onCreate }: any) => {
     await onCreate({
       title,
       description: description || undefined,
-      priority,
       dueDate: dueDate || undefined,
+      priority,
     });
   };
 
   return (
-    <div className="bg-white p-6 rounded-2xl shadow-md space-y-4">
-      <h2 className="text-2xl font-bold text-gray-800">Create Task</h2>
+    <div className="w-full bg-white p-6 rounded-2xl shadow-md border border-gray-200 flex flex-col gap-4">
 
-      {/* Title */}
       <input
-        className="w-full border p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+        className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300"
         placeholder="Task title"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
       />
 
-      {/* Description */}
       <textarea
-        className="w-full border p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+        className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300 resize-none"
         placeholder="Task description"
         value={description}
         onChange={(e) => setDescription(e.target.value)}
       />
 
-      {/* Due Date */}
       <input
         type="date"
-        className="w-full border p-3 rounded-lg"
+        className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300"
         value={dueDate}
         onChange={(e) => setDueDate(e.target.value)}
       />
 
-      {/* Priority */}
       <select
-        className="w-full border p-3 rounded-lg"
+        className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300"
         value={priority}
         onChange={(e) => setPriority(e.target.value)}
       >
@@ -54,13 +49,13 @@ export const AddTaskForm = ({ onCreate }: any) => {
         <option value="high">High Priority</option>
       </select>
 
-      {/* Button */}
       <button
         onClick={handleClick}
-        className="w-full bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600 transition"
+        className={buttonClass}
       >
         Create Task
       </button>
+
     </div>
   );
 };

@@ -4,8 +4,8 @@ import { useNavigate } from "react-router-dom";
 
 export const TasksPage = () => {
   const navigate = useNavigate();
-  const { tasks, loading, error, handleDelete, handleUpdateStatus } = useTasks();
-
+  const { tasks, loading, error, handleDelete, handleUpdateStatus} = useTasks();
+  
   if (loading)
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-100">

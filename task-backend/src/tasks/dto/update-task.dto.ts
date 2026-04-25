@@ -17,4 +17,8 @@ export class UpdateTaskDto {
   @IsOptional()
   @IsDateString()
   dueDate?: string;
+
+ @IsOptional()
+@IsEnum(["low","medium","high"])
+priority?: string;
 }

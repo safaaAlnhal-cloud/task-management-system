@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { fetchTasks,createTask,deleteTask, updateTaskStatus } from '../api/tasks';
+import { fetchTasks,createTask,deleteTask, updateTaskStatus,updateTask } from '../api/tasks';
 export type TaskStatus = "todo" | "in_progress" | "done";
 export type Task = {
   id: number;
@@ -15,6 +15,7 @@ export type Task = {
 type CreateTaskPayload = {
   title: string;
   description: string;
+  status:TaskStatus;
   priority: "low" | "medium" | "high";
   dueDate?: string;
 };
@@ -23,7 +24,7 @@ export const useTasks = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-
+ 
   useEffect(() => {
     const loadTasks = async () => {
       try {
@@ -74,5 +75,15 @@ const handleUpdateStatus = async (id: number, status: string) => {
   }
 };
 
-  return { tasks, loading, error, handleDelete, handleCreate,handleUpdateStatus};
+const handleUpdateTask = async (id: number, data: CreateTaskPayload) => {
+  const updated = await updateTask(id, data);
+
+  setTasks((prev) =>
+    prev.map((task) =>
+      task.id === id ? updated : task
+    )
+  );
+};
+
+  return { tasks, loading, error, handleDelete, handleCreate,handleUpdateStatus,handleUpdateTask};
 };

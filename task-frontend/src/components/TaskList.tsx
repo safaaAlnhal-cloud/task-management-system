@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 type Task = {
   id: number;
   title: string;
@@ -12,7 +13,8 @@ type Task = {
 type Props = {
   tasks: Task[];
   onDelete: (id: number) => void;
-  onUpdateStatus: (id: number, status: string) => void;
+  onUpdateStatus: (id: number, status: string) => void
+
 };
 
 export const TaskList = ({ tasks, onDelete, onUpdateStatus }: Props) => {
@@ -21,6 +23,7 @@ export const TaskList = ({ tasks, onDelete, onUpdateStatus }: Props) => {
     in_progress: "bg-blue-100 text-blue-600",
     done: "bg-green-100 text-green-600",
   };
+  const navigate = useNavigate();
 
   return (
     <div className="grid gap-4 p-6 max-w-2xl mx-auto">
@@ -102,6 +105,13 @@ export const TaskList = ({ tasks, onDelete, onUpdateStatus }: Props) => {
               className="text-xs px-3 py-1 rounded-md bg-red-100 text-red-600 hover:bg-red-200"
             >
               Delete
+            </button>
+
+            <button
+            onClick={() => navigate(`/edit/${task.id}`)}
+            className="text-blue-500 text-xs"
+             >
+                Edit
             </button>
           </div>
         </div>

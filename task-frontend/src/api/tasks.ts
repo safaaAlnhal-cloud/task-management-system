@@ -32,3 +32,13 @@ export const updateTaskStatus = async (id: number, status: string) => {
 
   return response.data.data;
 };
+
+export const getTaskById = async (id: number) => {
+  const response = await axios.get(`${API_URL}/${id}`);
+  return response.data.data;
+};
+
+export const updateTask = async (id: number, data: any) => {
+  const res = await axios.patch(`http://localhost:3000/tasks/${id}`, data);
+  return res.data.data;
+};

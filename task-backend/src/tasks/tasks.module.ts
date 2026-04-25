@@ -8,7 +8,7 @@ import { ActivityLogModule } from '../activity-log/activity-log.module';
 @Module({
    imports: [
     TypeOrmModule.forFeature([Task]),
-    ActivityLogModule, // 👈 هذا أهم سطر
+    ActivityLogModule, 
   ],
   controllers: [TasksController],
   providers: [TasksService],

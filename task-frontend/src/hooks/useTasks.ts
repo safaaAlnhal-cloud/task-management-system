@@ -20,25 +20,31 @@ type CreateTaskPayload = {
   dueDate?: string;
 };
 
-export const useTasks = () => {
+export const useTasks = (params?: {
+  search?: string;
+  status?: string;
+}) => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
- 
-  useEffect(() => {
-    const loadTasks = async () => {
-      try {
-        const data = await fetchTasks();
-        setTasks(data);
-      } catch (err) {
-        setError('Failed to fetch tasks');
-      } finally {
-        setLoading(false);
-      }
-    };
 
-    loadTasks();
-  }, []);
+  useEffect(() => {
+  const loadTasks = async () => {
+    try {
+      setLoading(true);
+
+      const data = await fetchTasks(params?.search, params?.status);
+
+      setTasks(data);
+    } catch (err) {
+      setError('Failed to fetch tasks');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  loadTasks();
+}, [params?.search , params?.status]);
 
   const handleDelete = async (id: number) => {
   try {
@@ -85,5 +91,7 @@ const handleUpdateTask = async (id: number, data: CreateTaskPayload) => {
   );
 };
 
+   
+   
   return { tasks, loading, error, handleDelete, handleCreate,handleUpdateStatus,handleUpdateTask};
 };

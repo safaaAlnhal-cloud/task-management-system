@@ -40,7 +40,9 @@ export class TasksService {
       
       this.logger.log('Task created successfully');
 
-      return savedTask;
+      return {
+        data: savedTask,
+     };
 
     } catch (error: any) {
 
@@ -64,7 +66,9 @@ async findAll(query: GetTasksDto) {
     this.logger.log(
       `Fetching tasks |search=${search} limit=${limit} offset=${offset} status=${status}`,
     );
-    const qb = this.taskRepo.createQueryBuilder('task');
+    const qb = this.taskRepo
+  .createQueryBuilder('task')
+  .orderBy('task.createdAt', 'DESC');
 
     if (status) {
       qb.andWhere('task.status = :status', { status });
@@ -89,11 +93,6 @@ async findAll(query: GetTasksDto) {
     }));
 return {
   data: enrichedTasks,
-  meta: {
-    total,
-    limit,
-    offset,
-  },
 };
 }
 async findOne(id: number) {
@@ -109,13 +108,14 @@ async findOne(id: number) {
       throw new NotFoundException('Task not found');
     }
     this.logger.log(`Task found id=${id}`);
-    
     return {
+  data: {
     ...task,
     isOverdue: TaskUtils.isOverdue(task),
     isHighPriority: TaskUtils.isHighPriority(task),
     isCompletedOnTime: TaskUtils.isCompletedOnTime(task),
-  };
+  },
+};
 }
 
 async update(id: number, dto: UpdateTaskDto) {
@@ -144,7 +144,9 @@ async update(id: number, dto: UpdateTaskDto) {
       );
     this.logger.log(`Task updated id=${id}`);
 
-    return saved;
+    return {
+  data: saved,
+     };
 
   } 
 
@@ -203,7 +205,9 @@ async updateStatus(id: number, dto: UpdateTaskStatusDto) {
 
     this.logger.log(`Task status updated to ${dto.status}`);
 
-    return saved;
+    return {
+  data: saved,
+};
 
   } 
 }

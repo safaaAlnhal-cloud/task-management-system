@@ -1,9 +1,26 @@
 import { useEffect, useState } from 'react';
-import { fetchTasks,createTask,deleteTask } from '../api/tasks';
-
+import { fetchTasks,createTask,deleteTask, updateTaskStatus } from '../api/tasks';
+export type TaskStatus = "todo" | "in_progress" | "done";
+export type Task = {
+  id: number;
+  title: string;
+  description?: string;
+  status:TaskStatus ;
+  priority?: "low" | "medium" | "high";
+  dueDate?: string;
+  isOverdue?: boolean;
+  isHighPriority?: boolean;
+  isCompletedOnTime?: boolean;
+};
+type CreateTaskPayload = {
+  title: string;
+  description: string;
+  priority: "low" | "medium" | "high";
+  dueDate?: string;
+};
 
 export const useTasks = () => {
-  const [tasks, setTasks] = useState<any[]>([]);
+  const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -32,12 +49,7 @@ export const useTasks = () => {
   }
 };
 
-const handleCreate = async (data: {
-  title: string;
-  description: string;
-  priority: "low" | "medium" | "high";
-  dueDate: string;
-}) => {
+const handleCreate = async (data:  CreateTaskPayload) => {
   try {
     const newTask = await createTask(data);
 
@@ -47,5 +59,20 @@ const handleCreate = async (data: {
   }
 }; 
 
-  return { tasks, loading, error, handleDelete, handleCreate};
+const handleUpdateStatus = async (id: number, status: string) => {
+  try {
+    const updatedTask = await updateTaskStatus(id, status);
+    
+
+    setTasks((prev) =>
+      prev.map((task) =>
+        task.id === id ? updatedTask : task
+      )
+    );
+  } catch (err) {
+    console.error("Update status failed");
+  }
+};
+
+  return { tasks, loading, error, handleDelete, handleCreate,handleUpdateStatus};
 };

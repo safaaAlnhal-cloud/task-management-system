@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { taskSchema } from "../validation/task.schema";
+import { useNavigate } from "react-router-dom";
 
 export const AddTaskForm = ({ onCreate }: any) => {
   const [title, setTitle] = useState("");
@@ -8,61 +9,71 @@ export const AddTaskForm = ({ onCreate }: any) => {
   const [priority, setPriority] = useState("medium");
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<any>({});
+
+  const navigate = useNavigate();
+
   const handleClick = async () => {
     if (!title.trim()) {
-  setErrors({ title: "Title is required" });
-  return;
-}
-  const result = taskSchema.safeParse({
-  title,
-  description: description || undefined,
-  priority,
-  dueDate: dueDate || undefined,
-});
+      setErrors({ title: "Title is required" });
+      return;
+    }
 
-  // ❌ validation error
-  if (!result.success) {
-    const fieldErrors: any = {};
-
-    result.error.issues.forEach((err) => {
-      const field = err.path[0];
-      fieldErrors[field] = err.message;
+    const result = taskSchema.safeParse({
+      title,
+      description: description || undefined,
+      priority,
+      dueDate: dueDate || undefined,
     });
 
-    setErrors(fieldErrors);
-    return; // 🚨 مهم جدًا: وقف التنفيذ
-  }
+    if (!result.success) {
+      const fieldErrors: any = {};
 
-  setErrors({});
-  setLoading(true);
+      result.error.issues.forEach((err) => {
+        const field = err.path[0];
+        fieldErrors[field] = err.message;
+      });
 
-  try {
-    await onCreate(result.data);
+      setErrors(fieldErrors);
+      return;
+    }
 
-    // optional reset
-    setTitle("");
-    setDescription("");
-    setDueDate("");
-    setPriority("medium");
+    setErrors({});
+    setLoading(true);
 
-  } catch (err) {
-    console.error("Create failed", err);
-  } finally {
-    setLoading(false); // ✔ دائمًا يرجع false
-  }
-};
+    try {
+      await onCreate(result.data);
+      setTitle("");
+      setDescription("");
+      setDueDate("");
+      setPriority("medium");
+
+    } catch (err) {
+      console.error("Create failed", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div className="w-full bg-white p-6 rounded-2xl shadow-md border border-gray-200 flex flex-col gap-4">
+    <form
+      onSubmit={(e) => {
+        e.preventDefault(); 
+        handleClick();    
+      }}
+      className="w-full bg-white p-6 rounded-2xl shadow-md border border-gray-200 flex flex-col gap-4"
+    >
 
+      {/* TITLE */}
       <input
-         className={`w-full p-2 border rounded ${
+        className={`w-full p-2 border rounded ${
           errors.title ? "border-red-500" : "border-gray-200"
         }`}
-         placeholder="Task title"
+        placeholder="Task title"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
       />
-       {errors.title && (
+
+      {errors.title && (
         <p className="text-red-500 text-sm">{errors.title}</p>
       )}
 
@@ -75,6 +86,7 @@ export const AddTaskForm = ({ onCreate }: any) => {
         value={description}
         onChange={(e) => setDescription(e.target.value)}
       />
+
       {errors.description && (
         <p className="text-red-500 text-sm">{errors.description}</p>
       )}
@@ -98,18 +110,33 @@ export const AddTaskForm = ({ onCreate }: any) => {
         <option value="high">High</option>
       </select>
 
-      {/* BUTTON */}
-      <button
-        disabled={loading}
-        onClick={handleClick}
-        className={`py-2 rounded text-white transition ${
-          loading
-            ? "bg-gray-400 cursor-not-allowed"
-            : "bg-gray-800 hover:bg-gray-900"
-        }`}
-      >
-        {loading ? "Creating..." : "Create Task"}
-      </button>
-    </div>
+      {/* BUTTONS */}
+   
+
+        {/* SUBMIT (Enter + Click) */}
+        <button
+          type="submit"
+          disabled={loading}
+          className={`flex-1 py-2 rounded text-white transition ${
+            loading
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-gray-800 hover:bg-gray-900"
+          }`}
+        >
+          {loading ? "Creating..." : "Create Task"}
+        </button>
+
+        {/* CANCEL */}
+        <button
+          type="button"
+          onClick={() => navigate(-1)}
+          className="flex-1 py-2 rounded border border-gray-300 text-gray-700 hover:bg-gray-100"
+        >
+          Cancel
+        </button>
+
+   
+
+    </form>
   );
 };

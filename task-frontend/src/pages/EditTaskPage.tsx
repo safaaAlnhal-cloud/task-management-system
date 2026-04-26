@@ -3,114 +3,176 @@ import { useEffect, useState } from "react";
 import { useTasks } from "../hooks/useTasks";
 import { useTask } from "../hooks/useTask";
 import { taskSchema } from "../validation/task.schema";
+
 export const EditTaskPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const { task, loading } = useTask(Number(id));
-  const { handleUpdateTask } = useTasks();
   const [dueDate, setDueDate] = useState("");
   const [priority, setPriority] = useState("medium");
   const [errors, setErrors] = useState<any>({});
-const [saving, setSaving] = useState(false);
+  const [saving, setSaving] = useState(false);
 
-useEffect(() => {
-  if (task) {
-    setTitle(task.title);
-    setDescription(task.description || "");
-    setDueDate(task.dueDate || "");
-    setPriority(task.priority || "medium");
-  }
-}, [task]);
+  const { task } = useTask(Number(id));
+  const { handleUpdateTask } = useTasks();
+
+  useEffect(() => {
+    if (task) {
+      setTitle(task.title);
+      setDescription(task.description || "");
+      setDueDate(task.dueDate || "");
+      setPriority(task.priority || "medium");
+    }
+  }, [task]);
+
   const handleSave = async () => {
-  if (!title.trim()) {
-    setErrors({ title: "Title is required" });
-    return;
-  }
+    setSaving(true);
+    setErrors({});
 
-  const result = taskSchema.safeParse({
-    title,
-    description,
-    priority,
-    dueDate,
-  });
+    try {
+      if (!title.trim()) {
+        setErrors({ title: "Title is required" });
+        setSaving(false);
+        return;
+      }
 
-  if (!result.success) {
-    const fieldErrors: any = {};
+      const result = taskSchema.safeParse({
+        title,
+        description,
+        priority,
+        dueDate,
+      });
 
-    result.error.issues.forEach((err) => {
-      const field = err.path[0];
-      fieldErrors[field] = err.message;
-    });
+      if (!result.success) {
+        const fieldErrors: any = {};
 
-    setErrors(fieldErrors);
-    return;
-  }
+        result.error.issues.forEach((err) => {
+          fieldErrors[err.path[0]] = err.message;
+        });
 
-  setErrors({});
-  setSaving(true);
+        setErrors(fieldErrors);
+        setSaving(false);
+        return;
+      }
 
-  await handleUpdateTask(Number(id), result.data);
+      await handleUpdateTask(Number(id), {
+        ...result.data,
+        dueDate: dueDate || undefined,
+      });
 
-  navigate("/tasks");
-};
+      navigate("/tasks");
+
+    } catch (err: any) {
+      const status = err?.response?.status;
+      const message = err?.response?.data?.message || err?.message;
+
+      if (status === 409) {
+        setErrors({
+          title: message || "Task title already exists",
+        });
+        return;
+      }
+
+      if (status === 400) {
+        setErrors({
+          general: message || "Invalid data sent",
+        });
+        return;
+      }
+
+      setErrors({
+        general: message || "Something went wrong",
+      });
+
+    } finally {
+      setSaving(false);
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4">
+    <form
+      onSubmit={(e) => {
+        e.preventDefault(); 
+        handleSave();     
+      }}
+      className="min-h-screen bg-gray-100 flex items-center justify-center px-4"
+    >
       <div className="w-full max-w-md bg-white p-6 rounded-2xl shadow-md border border-gray-200 flex flex-col gap-4">
 
         <h1 className="text-2xl font-bold text-gray-800 text-center">
           Edit Task
         </h1>
-     <input
-      className={`w-full p-2 border rounded ${
-      errors.title ? "border-red-500" : "border-gray-200"
-      }`}
-      value={title}
-      onChange={(e) => setTitle(e.target.value)}
-      />
-       {errors.title && (
-        <p className="text-red-500 text-sm">{errors.title}</p>
-       )}
 
-        <textarea
-          value={description ?? ""}
-          onChange={(e) => setDescription(e.target.value)}
-          placeholder="Description"
-          className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300 resize-none"
+        {/* TITLE */}
+        <input
+          className={`w-full p-2 border rounded ${
+            errors.title ? "border-red-500" : "border-gray-200"
+          }`}
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
         />
 
+        {errors.title && (
+          <p className="text-red-500 text-sm">{errors.title}</p>
+        )}
+
+        {/* DESCRIPTION */}
+        <textarea
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          className="w-full p-2 border rounded"
+        />
+
+        {/* DATE */}
         <input
           type="date"
           value={dueDate}
           onChange={(e) => setDueDate(e.target.value)}
-          className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300"
+          className="w-full p-2 border rounded"
         />
 
+        {/* PRIORITY */}
         <select
           value={priority}
           onChange={(e) => setPriority(e.target.value)}
-          className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300"
+          className="w-full p-2 border rounded"
         >
           <option value="low">Low Priority</option>
           <option value="medium">Medium Priority</option>
           <option value="high">High Priority</option>
         </select>
-           
+
+        {/* GENERAL ERROR */}
+        {errors.general && (
+          <p className="text-red-500 text-sm text-center">
+            {errors.general}
+          </p>
+        )}
+
+        {/* BUTTONS */}
         <button
-           disabled={saving}
-            onClick={handleSave}
-         className={`py-2 rounded text-white ${
-           saving
-         ? "bg-gray-400 cursor-not-allowed"
-         : "bg-gray-800 hover:bg-gray-900"
+          type="submit"
+          disabled={saving}
+          className={`py-2 rounded text-white ${
+            saving
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-gray-800 hover:bg-gray-900"
           }`}
-          >
+        >
           {saving ? "Saving..." : "Save Changes"}
-         </button>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => navigate(-1)}
+          className="py-2 rounded border"
+        >
+          Cancel
+        </button>
 
       </div>
-    </div>
+    </form>
   );
 };

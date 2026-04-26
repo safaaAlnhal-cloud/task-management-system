@@ -122,36 +122,56 @@ async findOne(id: number) {
 }
 
 async update(id: number, dto: UpdateTaskDto) {
-  
-    this.logger.log(`Updating task id=${id}`);
-    const task = await this.taskRepo.findOne({
-      where: { id },
-    });
+  this.logger.log(`Updating task id=${id}`);
 
-    if (!task) {
-      this.logger.warn(`Task not found id=${id}`);
-      throw new NotFoundException('Task not found');
-    }
-    const before = { ...task };
-    const updatedTask = Object.assign(task, dto);
-    const saved = await this.taskRepo.save(updatedTask);
+  const task = await this.taskRepo.findOne({
+    where: { id },
+  });
 
-   await this.activityLogService.log(
-     'update_task',
-     'Task',
+  if (!task) {
+    this.logger.warn(`Task not found id=${id}`);
+    throw new NotFoundException('Task not found');
+  }
+
+  const before = { ...task };
+
+  Object.assign(task, dto);
+
+  try {
+    const saved = await this.taskRepo.save(task);
+
+    await this.activityLogService.log(
+      'update_task',
+      'Task',
       saved.id,
       {
-       before,
-       after: saved,
+        before,
+        after: saved,
       },
-      );
+    );
+
     this.logger.log(`Task updated id=${id}`);
 
     return {
-  data: saved,
-     };
+      data: saved,
+    };
 
-  } 
+  } catch (error: any) {
+
+    if (
+      error instanceof QueryFailedError &&
+      error.driverError?.code === '23505'
+    ) {
+      this.logger.error('Duplicate task title', error);
+
+      throw new ConflictException('Task title already exists');
+    }
+
+    this.logger.error('Unexpected error', error);
+
+    throw error;
+  }
+}
 
 async remove(id: number) {
     this.logger.log(`Deleting task id=${id}`);

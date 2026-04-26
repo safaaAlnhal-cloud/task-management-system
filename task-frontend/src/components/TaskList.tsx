@@ -14,6 +14,18 @@ export const TaskList = ({ tasks, onDelete, onUpdateStatus }: Props) => {
     done: "bg-green-100 text-green-600",
   };
   const navigate = useNavigate();
+if (!tasks.length) {
+  return (
+    <div className="flex flex-col items-center justify-center mt-20 text-gray-500">
+      <p className="text-lg font-medium">
+        No tasks found
+      </p>
+      <p className="text-sm">
+        Try changing filters or search 🔍
+      </p>
+    </div>
+  );
+}
 
   return (
     <div className="grid gap-4 p-6 max-w-2xl mx-auto">

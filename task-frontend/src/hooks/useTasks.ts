@@ -64,13 +64,19 @@ const handleUpdateStatus = async (id: number, status: string) => {
 };
 
 const handleUpdateTask = async (id: number, data: CreateTaskPayload) => {
-  const updated = await updateTask(id, data);
+  try {
+    const updated = await updateTask(id, data);
 
-  setTasks((prev) =>
-    prev.map((task) =>
-      task.id === id ? updated : task
-    )
-  );
+    setTasks((prev) =>
+      prev.map((task) =>
+        task.id === id ? updated : task
+      )
+    );
+
+    return updated;
+  } catch (error) {
+    throw error; 
+  }
 };
    
   return { tasks, loading, error, handleDelete, handleCreate,handleUpdateStatus,handleUpdateTask};

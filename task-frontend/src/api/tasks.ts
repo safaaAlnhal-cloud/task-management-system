@@ -4,9 +4,16 @@ const BASE_URL = import.meta.env.VITE_API_URL;
 
 const API_URL = `${BASE_URL}/tasks`;
 
-export const fetchTasks = (search?: string, status?: string) =>
-  axios.get(API_URL, { params: { search, status } })
-    .then(res => res.data.data);
+export const fetchTasks = (
+  search?: string,
+  status?: string,
+  limit: number = 5,
+  offset: number = 0
+) =>
+  axios.get(API_URL, {
+    params: { search, status, limit, offset },
+  })
+  .then(res => res.data); 
 
 export const getTaskById = (id: number) =>
   axios.get(`${API_URL}/${id}`)

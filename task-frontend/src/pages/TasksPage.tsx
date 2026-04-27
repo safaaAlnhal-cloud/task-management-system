@@ -9,7 +9,7 @@ export const TasksPage = () => {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
 
-  const { tasks, loading, error, handleDelete, handleUpdateStatus } =
+  const { tasks, loading, error, handleDelete, handleUpdateStatus , page,setPage,total,limit} =
     useTasks({
       search,
       status: filter === "all" ? undefined : filter,
@@ -132,6 +132,30 @@ export const TasksPage = () => {
             onDelete={handleDelete}
             onUpdateStatus={handleUpdateStatus}
           />
+
+          <div className="flex justify-center gap-4 mt-6">
+
+  <button
+    onClick={() => setPage((p) => Math.max(p - 1, 1))}
+    disabled={page === 1}
+    className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+  >
+    Prev
+  </button>
+
+  <span>
+    Page {page} of {Math.ceil(total / limit)}
+  </span>
+
+  <button
+    onClick={() => setPage((p) => p + 1)}
+    disabled={page * limit >= total}
+    className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+  >
+    Next
+  </button>
+
+</div>
         </div>
 
       </div>

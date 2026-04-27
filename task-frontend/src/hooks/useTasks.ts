@@ -9,15 +9,26 @@ export const useTasks = (params?: {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0);
+  const limit = 5;
 
   useEffect(() => {
   const loadTasks = async () => {
     try {
       setLoading(true);
 
-      const data = await fetchTasks(params?.search, params?.status);
+      const offset = (page - 1) * limit;
 
-      setTasks(data);
+     const res = await fetchTasks(
+        params?.search,
+        params?.status,
+        limit,
+       offset
+      );
+
+    setTasks(res.data);     
+    setTotal(res.total);    
     } catch (err) {
       setError('Failed to fetch tasks');
     } finally {
@@ -26,7 +37,7 @@ export const useTasks = (params?: {
   };
 
   loadTasks();
-}, [params?.search , params?.status]);
+}, [params?.search, params?.status, page]);
 
 
   const handleDelete = async (id: number) => {
@@ -79,5 +90,5 @@ const handleUpdateTask = async (id: number, data: CreateTaskPayload) => {
   }
 };
    
-  return { tasks, loading, error, handleDelete, handleCreate,handleUpdateStatus,handleUpdateTask};
+  return { tasks, loading, error, handleDelete, handleCreate,handleUpdateStatus,handleUpdateTask,page,setPage,total,limit,};
 };

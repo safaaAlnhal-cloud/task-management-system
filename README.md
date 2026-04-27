@@ -178,3 +178,7 @@ npm run test
 npx vitest run --coverage
 ```
 
+## Pagination
+- Backend supports limit & offset
+- Frontend implements page navigation
+- Optimized UI for browsing tasks

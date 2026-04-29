@@ -14,7 +14,7 @@ export const TaskList = ({ tasks, onDelete, onUpdateStatus }: Props) => {
     done: "bg-green-100 text-green-600",
   };
   const navigate = useNavigate();
-if (!tasks.length) {
+ if (!tasks.length) {
   return (
     <div className="flex flex-col items-center justify-center mt-20 text-gray-500">
       <p className="text-lg font-medium">
@@ -79,11 +79,11 @@ if (!tasks.length) {
                   Overdue
                 </span>
               )}
-{task.isCompletedOnTime && (
-  <span className="text-green-600 font-medium">
-    ✔ On time
-  </span>
-)}
+          {task.isCompletedOnTime && (
+       <span className="text-green-600 font-medium">
+           ✔ On time
+       </span>
+        )}
             </div>
 
             {task.dueDate && (

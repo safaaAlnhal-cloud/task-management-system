@@ -1,5 +1,4 @@
 {
-  "dependencies": {
-    "zod": "^4.3.6"
-  }
+  "name": "task-management-system",
+  "private": true
 }

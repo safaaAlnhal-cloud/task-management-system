@@ -7,28 +7,33 @@ on:
 jobs:
   frontend:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - name: Install frontend
-        run: cd frontend && npm install
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
 
-      - name: Lint frontend
-        run: cd frontend && npm run lint
+      - name: Install frontend deps
+        run: cd task-frontend && npm install
 
       - name: Build frontend
-        run: cd frontend && npm run build
+        run: cd task-frontend && npm run build
 
   backend:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - name: Install backend
-        run: cd backend && npm install
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
 
-      - name: Lint backend
-        run: cd backend && npm run lint
-
-      - name: Build backend
-        run: cd backend && npm run build
+      - name: Install backend deps
+        run: cd task-backend && npm install

@@ -1,5 +1,4 @@
 import { IsNotEmpty, IsString, MinLength, IsEnum, IsOptional, IsDateString } from 'class-validator';
-import { Type } from 'class-transformer';
 
 export enum TaskPriority {
   LOW = 'low',

@@ -5,12 +5,12 @@ export class GetTasksDto {
   @IsOptional()
   @Type(() => Number)
   @IsNumber()
-  limit?: number = 10;
+  limit?: number =10;
 
   @IsOptional()
   @Type(() => Number)
   @IsNumber()
-  offset?: number= 0;
+  offset?: number = 0;
 
   @IsOptional()
   @IsEnum(TaskStatus)

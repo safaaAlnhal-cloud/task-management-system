@@ -14,8 +14,8 @@ export class ActivityLog {
   @Column({ nullable: true })
   entityId!: number;
 
-  @Column({ nullable: true })
-   metadata?: string;
+@Column({ type: 'json', nullable: true })
+metadata?: Record<string, unknown>;
 
   @CreateDateColumn()
   createdAt!: Date;

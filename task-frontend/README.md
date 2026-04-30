@@ -1,73 +1,86 @@
-# React + TypeScript + Vite
+# 🟦 Task Frontend (React + Vite)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## 📌 Project Overview
 
-Currently, two official plugins are available:
+This is the frontend application for the Task Management System built using:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- React (Vite)
+- TypeScript
+- Tailwind CSS
+- Axios
+- React Router
 
-## React Compiler
+It provides a user interface for managing tasks with full CRUD operations and advanced UI features like filtering, searching, and status tracking.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## ⚙️ Features
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### 📝 Task Management UI
+- Create new tasks
+- Edit existing tasks
+- Delete tasks
+- View task details
+- Update task status 
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### 🔍 Advanced UI Features
+- Search tasks by title
+- Filter tasks by status
+- Pagination support
+- Priority indicators (low / medium / high)
+- Due date display
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### 🧠 Smart UI Logic
+- Overdue task highlighting
+- Completed-on-time indicators
+- Loading states
+- Error handling states
+- Empty state handling
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+---
+
+## 🚀 Setup
+
+### 1. Install dependencies
+```bash
+npm install
+```
+### Run development server
+```bash
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Frontend runs on:
+http://localhost:5173
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+--- 
+## 🔐 Environment Variables
+Frontend uses .env file.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### 📄 Example .env.example
+VITE_API_URL=http://localhost:3000
+
+---
+
+## 📁 Folder Structure
+
+src/
+├── api/
+├── components/
+├── hooks/
+├── pages/
+├── types/
+├── validation/
+
+---
+
+## 🧪 Testing
+
+Run tests
+```bash
+npm run test
+```
+Coverage
+```bash
+npx vitest run --coverage
 ```

@@ -1,37 +1,51 @@
-# 📌 Task Management System (Full Stack)
+# 🟥 Task Management System (Full Stack)
 
 ## 📌 Project Overview
-This is a full-stack Task Management System that allows users to create, manage, update, and track tasks efficiently.
 
-The project simulates a real-world application where tasks can be organized using status, priority, and due dates. It demonstrates frontend-backend communication, database design, validation, testing, and Docker deployment.
+This is a full-stack Task Management System built to simulate a real-world application.
+
+The system allows users to create, manage, update, and track tasks using a clean UI connected to a backend API and a PostgreSQL database.
+
+The project demonstrates full-stack development concepts including:
+- Frontend & backend integration
+- API design
+- Database management
+- Validation and error handling
+- Docker-based environment setup
 
 ---
 
 ## 🚀 Features
 
-- ➕ Create new tasks
-- 📋 View all tasks
-- 🔍 Search tasks by title
-- 🎯 Filter tasks by status (todo / in_progress / done)
-- ✏️ Edit tasks
-- 🗑️ Delete tasks
-- 🔄 Update task status
-- 📅 Due date tracking
-- ⚠️ Priority levels (low / medium / high)
-- ⏰ Overdue detection
-- ✔️ Completed-on-time indicator
-- 📄 Task details page
-- 🧪 Unit testing (frontend + backend)
-- 🐳 Dockerized full system
+### 📝 Core Features
+- Create task
+- Update task
+- Delete task
+- View task details
+- Update task status (todo / in_progress / done)
+
+### 🔍 Advanced Features
+- Search tasks by title
+- Filter tasks by status
+- Pagination (limit / offset)
+
+### 🧠 Business Logic
+- Detect overdue tasks automatically
+- Show completed-on-time tasks
+- Track activity logs (create, update, delete, status change)
 
 ---
+## 🧠 System Architecture
 
-## 🧠 Business Logic Features
-
-- Tasks automatically marked as **overdue** if due date is passed
-- Completed tasks show if they were finished on time
-- Activity logging for task actions (backend feature)
-
+Frontend (React)
+   ↓ HTTP Requests (Axios)
+Backend (NestJS API)
+   ↓
+Service Layer (Business Logic)
+   ↓
+Repository Layer (TypeORM)
+   ↓
+PostgreSQL Database
 ---
 
 ## 🧱 Tech Stack
@@ -42,7 +56,6 @@ The project simulates a real-world application where tasks can be organized usin
 - Tailwind CSS
 - Axios
 - React Router
-- Vitest + React Testing Library
 
 ### 🟩 Backend
 - NestJS
@@ -50,100 +63,101 @@ The project simulates a real-world application where tasks can be organized usin
 - PostgreSQL
 - TypeORM
 
-
 ### 🐳 DevOps
 - Docker
 - Docker Compose
 
 ---
 
-## 📁 Folder Structure
-
-### Frontend
-```txt
-src/
-├── api/              # Axios API layer
-├── components/       # Reusable UI components
-├── hooks/            # Custom hooks (useTasks, useTask)
-├── pages/            # Application pages
-├── types/            # TypeScript types
-├── validation/       # Zod validation schemas
-├── tests/            # Unit tests
+## 📁 Project Structure
 ```
-
-### Frontend
-```txt
-src/
-├── tasks/
-├── activity-log/
-├── database/
-├── common/
-├── config/
-├── migrations/
-├── seeds/
+task-management-system/
+│
+├── task-frontend/ # React app
+├── task-backend/ # NestJS API
+├── docker-compose.yml # Runs full system
+└── README.md
 
 ```
-
-## ⚙️ Environment Variables
-### 📌 Backend (.env)
-
-
-## ⚙️ Environment Variables
-
-This project requires a `.env` file to run.
-
-Create a `.env` file in the root directory and copy values from `.env.example`.
-
-### Required Variables
-
-- PORT → Server port
-- DB_HOST → Database host
-- DB_PORT → Database port
-- DB_USER → Database username
-- DB_PASSWORD → Database password
-- DB_NAME → Database name
 
 ---
 
-### Example `.env.example`
+## ⚙️ Prerequisites (VERY IMPORTANT)
 
-```env
+Before running the project, make sure you have:
+
+- Node.js installed
+- npm installed
+- Docker installed
+- Docker Compose installed
+
+Check versions:
+
+```bash
+node -v
+npm -v
+docker --version
+docker-compose --version
+
+```
+---
+## 🔐 Environment Variables
+
+This project uses environment variables for configuration.
+
+⚠️ Important :
+Use .env.example as a template
+
+### Backend .env
+Create file:
+task-backend/.env
+
+Example:
+
 PORT=3000
+
 DB_HOST=localhost
 DB_PORT=5432
 DB_USER=postgres
-DB_PASSWORD=8569
-DB_NAME=github_backend
-```
----
+DB_PASSWORD=1234
+DB_NAME=task_db
 
-
-### 📌 Frontend (.env)
-
-### Example `.env.example`
+### Frontend .env
+Create file:
+task-frontend/.env
+Example:
 
 VITE_API_URL=http://localhost:3000
 
-
 ---
+## 🐳 Docker Explained (IMPORTANT)
+💡 What is Docker?
+Docker allows you to run the entire system in isolated containers without installing PostgreSQL manually.
 
-## 🐳 Docker Setup
+💡 What Docker does in this project:
+Runs PostgreSQL database
+Runs backend server
+Runs frontend app
+Connects everything automatically
 
-### 📦 Services
-
-- backend (NestJS API)
-- database (PostgreSQL)
-
----
-
-### 🚀 Run Full Project
+### 🚀 Run the Full System (Recommended)
 
 ```bash
 docker-compose up --build
-
 ```
-### 🛑 Stop Project
+🔥 What will happen:
+- Database container starts
+- Backend connects to database
+- Frontend connects to backend
+- Full system runs automatically
+### 🌐 Application URLs
 
+| Service   | URL                    |
+|----------|------------------------|
+| Frontend | http://localhost:5173 |
+| Backend  | http://localhost:3000 |
+| Database | PostgreSQL (port 5432) |
+### 🛑 Stop the System
 ```bash
 docker-compose down
 ```
@@ -152,33 +166,31 @@ docker-compose down
 docker-compose up --build
 ```
 
-## 📚 API Endpoints
+### 💡 Note:
+When running with Docker, backend uses a different environment configuration:
+DB_HOST=db
 
-- GET    /tasks
-- GET    /tasks/:id
-- POST   /tasks
-- PATCH  /tasks/:id
-- DELETE /tasks/:id
-- PATCH  /tasks/:id/status
+Instead of:
 
+DB_HOST=localhost
+
+Because services communicate inside Docker network.
+---
 ## 🧪 Testing
 
-### Backend
+###  Backend
 ```bash
 npm run test
-```
-```bash
 npm run test:cov
 ```
+
 ### Frontend
 ```bash
 npm run test
-```
-```bash
 npx vitest run --coverage
 ```
 
-## Pagination
-- Backend supports limit & offset
-- Frontend implements page navigation
-- Optimized UI for browsing tasks
+
+
+
+

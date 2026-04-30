@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useTasks } from "../hooks/useTasks";
 import { useTask } from "../hooks/useTask";
 import { taskSchema } from "../validation/task.schema";
+import { getErrorMessage } from "../utils/error";
 
 export const EditTaskPage = () => {
   const { id } = useParams();
@@ -64,28 +65,10 @@ export const EditTaskPage = () => {
 
       navigate("/tasks");
 
-    } catch (err: any) {
-      const status = err?.response?.status;
-      const message = err?.response?.data?.message || err?.message;
-
-      if (status === 409) {
-        setErrors({
-          title: message || "Task title already exists",
-        });
-        return;
-      }
-
-      if (status === 400) {
-        setErrors({
-          general: message || "Invalid data sent",
-        });
-        return;
-      }
-
+    } catch (err) {
       setErrors({
-        general: message || "Something went wrong",
-      });
-
+          general: getErrorMessage(err, "Something went wrong"),
+        });
     } finally {
       setSaving(false);
     }

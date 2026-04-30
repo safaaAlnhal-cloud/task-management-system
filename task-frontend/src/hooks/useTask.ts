@@ -11,8 +11,8 @@ export const useTask = (id: number) => {
       try {
         setLoading(true);
 
-        const data = await getTaskById(id);
-        setTask(data);
+        const res = await getTaskById(id);
+        setTask(res.data);
       } catch (err) {
         setError("Failed to load task");
       } finally {

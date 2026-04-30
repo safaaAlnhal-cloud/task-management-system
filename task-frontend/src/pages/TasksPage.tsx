@@ -24,16 +24,8 @@ export const TasksPage = () => {
       </div>
     );
 
-  if (error)
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-100">
-        <p className="text-red-500 font-semibold bg-red-100 px-5 py-3 rounded-xl shadow">
-          {error}
-        </p>
-      </div>
-    );
-
   return (
+    
     <div className="min-h-screen bg-gray-100 py-12 px-6">
       <div className="max-w-4xl mx-auto flex flex-col gap-8">
 
@@ -127,6 +119,12 @@ export const TasksPage = () => {
         </div>
 
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+           
+         {error && (
+           <div className="mb-4 p-3 bg-red-100 text-red-600 rounded">
+                {error}
+           </div>
+         )}
           <TaskList
             tasks={tasks}
             onDelete={handleDelete}
@@ -135,27 +133,27 @@ export const TasksPage = () => {
 
           <div className="flex justify-center gap-4 mt-6">
 
-  <button
-    onClick={() => setPage((p) => Math.max(p - 1, 1))}
-    disabled={page === 1}
-    className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
-  >
-    Prev
-  </button>
+      <button
+           onClick={() => setPage((p) => Math.max(p - 1, 1))}
+           disabled={page === 1}
+           className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+      >
+         Prev
+      </button>
 
-  <span>
-    Page {page} of {Math.ceil(total / limit)}
-  </span>
+      <span>
+         Page {page} of {Math.ceil(total / limit)}
+      </span>
 
-  <button
-    onClick={() => setPage((p) => p + 1)}
-    disabled={page * limit >= total}
-    className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
-  >
-    Next
-  </button>
+      <button
+       onClick={() => setPage((p) => p + 1)}
+       disabled={page * limit >= total}
+       className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+      >
+         Next
+      </button>
 
-</div>
+     </div>
         </div>
 
       </div>

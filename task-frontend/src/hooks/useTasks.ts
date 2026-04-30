@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { fetchTasks,createTask,deleteTask, updateTaskStatus,updateTask } from '../api/tasks';
 import type { Task, CreateTaskPayload } from "../types/task.types";
-
+import { getErrorMessage } from "../utils/error";
 export const useTasks = (params?: {
   search?: string;
   status?: string;
@@ -30,8 +30,9 @@ export const useTasks = (params?: {
     setTasks(res.data);     
     setTotal(res.total);    
     } catch (err) {
-      setError('Failed to fetch tasks');
-    } finally {
+    console.error("fetchTasks error:", err);
+    setError(getErrorMessage(err, "Failed to fetch tasks"));
+   } finally {
       setLoading(false);
     }
   };
@@ -44,9 +45,10 @@ export const useTasks = (params?: {
   try {
     await deleteTask(id);
     setTasks((prev) => prev.filter((task) => task.id !== id));
-  } catch (err) {
-    console.error("Delete failed");
-  }
+  }  catch (err) {
+  console.error(err);
+  setError(getErrorMessage(err, "Failed to delete task"));
+}
 };
 
 
@@ -54,11 +56,12 @@ const handleCreate = async (data:  CreateTaskPayload) => {
   try {
     const newTask = await createTask(data);
 
-    setTasks((prev) => [newTask, ...prev]);
+    setTasks((prev) => [newTask.data , ...prev]);
     return true;
   } catch (err) {
-    return false;
-  }
+  console.error(err);
+  setError(getErrorMessage(err, "Failed to create task"));
+}
 }; 
 
 const handleUpdateStatus = async (id: number, status: string) => {
@@ -66,12 +69,13 @@ const handleUpdateStatus = async (id: number, status: string) => {
     const updatedTask = await updateTaskStatus(id, status);
     setTasks((prev) =>
       prev.map((task) =>
-        task.id === id ? updatedTask : task
+        task.id === id ? updatedTask.data : task
       )
     );
   } catch (err) {
-    console.error("Update status failed");
-  }
+  console.error(err);
+  setError(getErrorMessage(err, "Failed to update status"));
+}
 };
 
 const handleUpdateTask = async (id: number, data: CreateTaskPayload) => {
@@ -80,14 +84,15 @@ const handleUpdateTask = async (id: number, data: CreateTaskPayload) => {
 
     setTasks((prev) =>
       prev.map((task) =>
-        task.id === id ? updated : task
+        task.id === id ? updated.data : task
       )
     );
 
     return updated;
-  } catch (error) {
-    throw error; 
-  }
+  } catch (err) {
+    console.error(err);
+  setError(getErrorMessage(err, "Failed to update task"));
+}
 };
    
   return { tasks, loading, error, handleDelete, handleCreate,handleUpdateStatus,handleUpdateTask,page,setPage,total,limit,};

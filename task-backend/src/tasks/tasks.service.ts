@@ -46,15 +46,6 @@ export class TasksService {
 
     } catch (error: any) {
 
-      if (
-        error instanceof QueryFailedError &&
-        (error as any).driverError?.code === '23505'
-      ) {
-        this.logger.error('Duplicate task title', error);
-
-        throw new ConflictException('Task title already exists');
-      }
-
       this.logger.error('Unexpected error', error);
 
       throw error;
@@ -157,15 +148,6 @@ async update(id: number, dto: UpdateTaskDto) {
     };
 
   } catch (error: any) {
-
-    if (
-      error instanceof QueryFailedError &&
-      error.driverError?.code === '23505'
-    ) {
-      this.logger.error('Duplicate task title', error);
-
-      throw new ConflictException('Task title already exists');
-    }
 
     this.logger.error('Unexpected error', error);
 

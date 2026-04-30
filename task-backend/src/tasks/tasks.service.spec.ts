@@ -55,21 +55,6 @@ describe('TasksService', () => {
 });
 
 
-it('should throw ConflictException on duplicate title', async () => {
-  const error = new QueryFailedError(
-    'INSERT',
-    [],
-    new Error('duplicate')
-  );
-  (error as any).driverError = { code: '23505' };
-  mockTaskRepo.create.mockReturnValue({ title: 'task' });
-  mockTaskRepo.save.mockRejectedValue(error);
-
-  await expect(service.create({ title: 'task' } as any))
-    .rejects
-    .toThrow('Task title already exists');
-});
-
 it('should return task if found', async () => {
   const task = { id: 1 };
   mockTaskRepo.findOne.mockResolvedValue(task);

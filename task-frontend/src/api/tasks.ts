@@ -1,49 +1,44 @@
 import axios from "axios";
 import type { CreateTaskPayload } from "../types/task.types";
-const BASE_URL = import.meta.env.VITE_API_URL;
 
+const BASE_URL = import.meta.env.VITE_API_URL;
 const API_URL = `${BASE_URL}/tasks`;
 
-export const fetchTasks = (
+export const fetchTasks = async (
   search?: string,
   status?: string,
   limit: number = 5,
   offset: number = 0
-) =>
-  axios.get(API_URL, {
+) => {
+  const res = await axios.get(API_URL, {
     params: { search, status, limit, offset },
-  })
-  .then(res => res.data); 
+  });
 
-export const getTaskById = (id: number) =>
-  axios.get(`${API_URL}/${id}`)
-    .then(res => res.data.data);
+  return res.data; 
+};
+
+export const getTaskById = async (id: number) => {
+  const res = await axios.get(`${API_URL}/${id}`);
+  return res.data;
+};
+
 
 export const createTask = async (data: CreateTaskPayload) => {
-  try {
-    const res = await axios.post(API_URL, data);
-    return res.data.data;
-  } catch (error: any) {
-    throw error; 
-  }
+  const res = await axios.post(API_URL, data);
+  return res.data;
 };
 
 export const updateTask = async (id: number, data: CreateTaskPayload) => {
-  try {
-    const res = await axios.patch(`${API_URL}/${id}`, data);
-    return res.data.data;
-  } catch (error: any) {
-    throw error; 
-  }
+  const res = await axios.patch(`${API_URL}/${id}`, data);
+  return res.data;
 };
-export const deleteTask = (id: number) =>
-  axios.delete(`${API_URL}/${id}`);
+
+export const deleteTask = async (id: number) => {
+  const res = await axios.delete(`${API_URL}/${id}`);
+  return res.data;
+};
 
 export const updateTaskStatus = async (id: number, status: string) => {
-  const response = await axios.patch(
-   `${API_URL}/${id}/status`,
-    { status }
-  );
-
-  return response.data.data;
+  const res = await axios.patch(`${API_URL}/${id}/status`, { status });
+  return res.data;
 };

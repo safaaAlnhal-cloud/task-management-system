@@ -10,15 +10,20 @@ export default [
 
   js.configs.recommended,
   ...tseslint.configs.recommended,
-  reactHooks.configs["recommended"],
-  reactRefresh.configs.vite,
 
   {
     files: ["**/*.{ts,tsx}"],
     languageOptions: {
       globals: globals.browser,
     },
+    plugins: {
+      "react-hooks": reactHooks,
+      "react-refresh": reactRefresh,
+    },
     rules: {
+      ...reactHooks.configs.recommended.rules,
+      "react-refresh/only-export-components": "warn",
+
       "@typescript-eslint/no-explicit-any": "warn",
       "@typescript-eslint/no-unsafe-assignment": "off",
       "@typescript-eslint/no-unsafe-member-access": "off",

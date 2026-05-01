@@ -7,14 +7,14 @@ import { globalIgnores } from "eslint/config";
 
 export default [
   globalIgnores(["dist"]),
+
+  js.configs.recommended,
+  ...tseslint.configs.recommended,
+  reactHooks.configs["recommended"],
+  reactRefresh.configs.vite,
+
   {
     files: ["**/*.{ts,tsx}"],
-    extends: [
-      js.configs.recommended,
-      tseslint.configs.recommended,
-      reactHooks.configs.flat.recommended,
-      reactRefresh.configs.vite,
-    ],
     languageOptions: {
       globals: globals.browser,
     },

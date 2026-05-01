@@ -1,4 +1,9 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+} from 'typeorm';
 
 @Entity()
 export class ActivityLog {
@@ -14,8 +19,8 @@ export class ActivityLog {
   @Column({ nullable: true })
   entityId!: number;
 
-  @Column({ nullable: true })
-   metadata?: string;
+  @Column({ type: 'json', nullable: true })
+  metadata?: Record<string, unknown>;
 
   @CreateDateColumn()
   createdAt!: Date;

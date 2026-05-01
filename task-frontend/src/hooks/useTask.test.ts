@@ -1,24 +1,23 @@
 import { renderHook, waitFor } from "@testing-library/react";
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, afterEach } from "vitest";
 import { useTask } from "./useTask";
 import * as api from "../api/tasks";
 
-
 vi.mock("../api/tasks", () => ({
-  fetchTasks: vi.fn(),
-  createTask: vi.fn(),
-  deleteTask: vi.fn(),
-  updateTaskStatus: vi.fn(),
-  updateTask: vi.fn(),
   getTaskById: vi.fn(),
 }));
 
-describe("useTask hook", () => {
+afterEach(() => {
+  vi.clearAllMocks();
+});
 
+describe("useTask hook", () => {
   it("should load task successfully", async () => {
     (api.getTaskById as any).mockResolvedValue({
-      id: 1,
-      title: "Test Task",
+      data: {
+        id: 1,
+        title: "Test Task",
+      },
     });
 
     const { result } = renderHook(() => useTask(1));
@@ -28,6 +27,7 @@ describe("useTask hook", () => {
         id: 1,
         title: "Test Task",
       });
+
       expect(result.current.loading).toBe(false);
       expect(result.current.error).toBe("");
     });
@@ -44,5 +44,4 @@ describe("useTask hook", () => {
       expect(result.current.loading).toBe(false);
     });
   });
-
 });

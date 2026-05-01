@@ -8,7 +8,7 @@ export const AddTaskForm = ({ onCreate }: any) => {
   const [dueDate, setDueDate] = useState("");
   const [priority, setPriority] = useState("medium");
   const [loading, setLoading] = useState(false);
-  const [errors, setErrors] = useState<any>({});
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   const navigate = useNavigate();
 

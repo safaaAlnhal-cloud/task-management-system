@@ -13,9 +13,11 @@ export const useTask = (id: number) => {
 
         const res = await getTaskById(id);
         setTask(res.data);
-      } catch (err) {
+      } catch (err: unknown) {
+         console.error(err);
         setError("Failed to load task");
-      } finally {
+    }
+       finally {
         setLoading(false);
       }
     };

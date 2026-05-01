@@ -1,5 +1,11 @@
-import { IsNotEmpty, IsString, MinLength, IsEnum, IsOptional, IsDateString } from 'class-validator';
-import { Type } from 'class-transformer';
+import {
+  IsNotEmpty,
+  IsString,
+  MinLength,
+  IsEnum,
+  IsOptional,
+  IsDateString,
+} from 'class-validator';
 
 export enum TaskPriority {
   LOW = 'low',
@@ -15,10 +21,10 @@ export class CreateTaskDto {
   @IsOptional()
   @IsString()
   description?: string;
-  
+
   @IsOptional()
   @IsEnum(TaskPriority)
-   priority?: TaskPriority;
+  priority?: TaskPriority;
 
   @IsOptional()
   @IsDateString()

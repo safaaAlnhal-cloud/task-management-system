@@ -125,16 +125,17 @@ DB_NAME=task_db
 ### Frontend .env
 Create file:
 task-frontend/.env
+
 Example:
 
 VITE_API_URL=http://localhost:3000
 
 ---
 ## 🐳 Docker Explained (IMPORTANT)
-💡 What is Docker?
+### 💡 What is Docker?
 Docker allows you to run the entire system in isolated containers without installing PostgreSQL manually.
 
-💡 What Docker does in this project:
+### 💡 What Docker does in this project:
 Runs PostgreSQL database
 Runs backend server
 Runs frontend app
@@ -150,6 +151,7 @@ docker-compose up --build
 - Backend connects to database
 - Frontend connects to backend
 - Full system runs automatically
+
 ### 🌐 Application URLs
 
 | Service   | URL                    |
@@ -157,10 +159,12 @@ docker-compose up --build
 | Frontend | http://localhost:5173 |
 | Backend  | http://localhost:3000 |
 | Database | PostgreSQL (port 5432) |
+
 ### 🛑 Stop the System
 ```bash
 docker-compose down
 ```
+
 ### 🔄 Rebuild After Changes
 ```bash
 docker-compose up --build
@@ -189,7 +193,34 @@ npm run test:cov
 npm run test
 npx vitest run --coverage
 ```
+---
+## ⚙️ Continuous Integration (CI)
 
+This project uses GitHub Actions to automatically validate code on every push and pull request.
+
+### 🔄 What CI does:
+Install dependencies for frontend & backend
+Run ESLint (code quality check)
+Build frontend and backend
+Run all tests automatically
+
+### 🧪 CI Workflow
+
+The pipeline runs the following steps:
+
+Frontend
+```bash
+npm install
+npm run lint
+npm run build
+npm run test
+```
+Backend
+```bash
+npm install
+npm run build
+npm run test
+```
 
 
 

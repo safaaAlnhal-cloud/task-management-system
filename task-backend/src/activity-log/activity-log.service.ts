@@ -16,7 +16,7 @@ export class ActivityLogService {
     action: string,
     entity: string,
     entityId?: number,
-    metadata?: any,
+    metadata?: Record<string, unknown>,
   ) {
     try {
       const log = this.logRepo.create({
@@ -24,7 +24,7 @@ export class ActivityLogService {
         entity,
         entityId,
         metadata,
-      });
+      } as Partial<ActivityLog>);
 
       return await this.logRepo.save(log);
     } catch (error) {
@@ -34,4 +34,3 @@ export class ActivityLogService {
     }
   }
 }
-

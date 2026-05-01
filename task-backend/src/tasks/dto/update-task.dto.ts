@@ -1,4 +1,10 @@
-import { IsOptional, IsString, IsEnum, IsDateString, MinLength } from 'class-validator';
+import {
+  IsOptional,
+  IsString,
+  IsEnum,
+  IsDateString,
+  MinLength,
+} from 'class-validator';
 import { TaskStatus } from '../task.entity';
 
 export enum TaskPriority {
@@ -10,7 +16,7 @@ export class UpdateTaskDto {
   @IsOptional()
   @IsString()
   @MinLength(3)
-   title?: string;
+  title?: string;
 
   @IsOptional()
   @IsString()
@@ -26,5 +32,5 @@ export class UpdateTaskDto {
 
   @IsOptional()
   @IsEnum(TaskPriority)
-  priority?: TaskPriority;  
+  priority?: TaskPriority;
 }

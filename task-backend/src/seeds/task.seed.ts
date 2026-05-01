@@ -45,7 +45,7 @@ export const taskSeeder = async (dataSource: DataSource) => {
       description: 'This is late',
       status: TaskStatus.TODO,
       priority: TaskPriority.HIGH,
-      dueDate: new Date(now.getTime() - 3 * 86400000), 
+      dueDate: new Date(now.getTime() - 3 * 86400000),
     },
 
     {

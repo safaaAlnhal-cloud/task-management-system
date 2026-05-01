@@ -16,4 +16,4 @@ const run = async () => {
   await dataSource.destroy();
 };
 
-run();
+void run();

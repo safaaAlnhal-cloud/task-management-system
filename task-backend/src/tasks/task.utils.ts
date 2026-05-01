@@ -1,18 +1,17 @@
 import { Task } from './task.entity';
 
 export class TaskUtils {
-
   static isOverdue(task: Task): boolean {
     if (!task.dueDate) return false;
 
     const now = new Date();
     const due = new Date(task.dueDate);
 
-     return String(task.status) !== 'done' && due < now;
+    return String(task.status) !== 'done' && due < now;
   }
 
   static isHighPriority(task: Task): boolean {
-     return String(task.priority) === 'high';
+    return String(task.priority) === 'high';
   }
 
   static isCompletedOnTime(task: Task): boolean {

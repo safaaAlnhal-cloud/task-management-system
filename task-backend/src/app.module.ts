@@ -25,7 +25,7 @@ import { ActivityLogModule } from './activity-log/activity-log.module';
         password: config.get('DB_PASSWORD'),
         database: config.get('DB_NAME'),
         entities: [Task, ActivityLog],
-        synchronize: false, 
+        synchronize: false,
       }),
     }),
 

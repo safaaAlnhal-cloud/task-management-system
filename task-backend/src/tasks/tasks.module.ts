@@ -6,10 +6,7 @@ import { Task } from './task.entity';
 import { ActivityLog } from '../activity-log/activity-log.entity';
 import { ActivityLogModule } from '../activity-log/activity-log.module';
 @Module({
-   imports: [
-    TypeOrmModule.forFeature([Task]),
-    ActivityLogModule, 
-  ],
+  imports: [TypeOrmModule.forFeature([Task]), ActivityLogModule],
   controllers: [TasksController],
   providers: [TasksService],
 })

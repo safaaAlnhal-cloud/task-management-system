@@ -1,25 +1,27 @@
-import { renderHook, waitFor, act } from "@testing-library/react";
-import { describe, it, expect, vi } from "vitest";
+import { renderHook, waitFor } from "@testing-library/react";
+import { vi, describe, it, expect, beforeEach } from "vitest";
 import { useTasks } from "./useTasks";
 import * as api from "../api/tasks";
 
-vi.mock("../../api/tasks");
-vi.mock("../api/tasks", () => ({
-  fetchTasks: vi.fn(),
-  createTask: vi.fn(),
-  deleteTask: vi.fn(),
-  updateTaskStatus: vi.fn(),
-  updateTask: vi.fn(),
-  getTaskById: vi.fn(),
-}));
+vi.mock("../api/tasks");
 
-describe("useTasks hook", () => {
+const mockedApi = vi.mocked(api);
+
+describe("useTasks", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it("should load tasks", async () => {
-    (api.fetchTasks as any).mockResolvedValue([
-      { id: 1, title: "Task 1" },
-      { id: 2, title: "Task 2" },
-    ]);
+    mockedApi.fetchTasks.mockResolvedValue({
+      data: [
+        { id: 1, title: "Task 1" },
+        { id: 2, title: "Task 2" }
+      ],
+      total: 2,
+      limit: 5,
+      offset: 0
+    });
 
     const { result } = renderHook(() => useTasks());
 
@@ -29,13 +31,15 @@ describe("useTasks hook", () => {
     });
   });
 
-  
   it("should delete task", async () => {
-    (api.fetchTasks as any).mockResolvedValue([
-      { id: 1, title: "Task 1" },
-    ]);
+    mockedApi.fetchTasks.mockResolvedValue({
+      data: [{ id: 1, title: "Task 1" }],
+      total: 1,
+      limit: 5,
+      offset: 0
+    });
 
-    (api.deleteTask as any).mockResolvedValue({});
+    mockedApi.deleteTask.mockResolvedValue({});
 
     const { result } = renderHook(() => useTasks());
 
@@ -43,50 +47,54 @@ describe("useTasks hook", () => {
       expect(result.current.tasks.length).toBe(1);
     });
 
-    await act(async () => {
-      await result.current.handleDelete(1);
-    });
+    await result.current.handleDelete(1);
 
-    expect(result.current.tasks.length).toBe(0);
+    await waitFor(() => {
+      expect(result.current.tasks.length).toBe(0);
+    });
   });
 
-
   it("should create task", async () => {
-    (api.fetchTasks as any).mockResolvedValue([]);
+    mockedApi.fetchTasks.mockResolvedValue({
+      data: [],
+      total: 0,
+      limit: 5,
+      offset: 0
+    });
 
-    (api.createTask as any).mockResolvedValue({
-      id: 1,
-      title: "New Task",
+    mockedApi.createTask.mockResolvedValue({
+      data: { id: 1, title: "New Task" }
     });
 
     const { result } = renderHook(() => useTasks());
 
-    await act(async () => {
-      await result.current.handleCreate({
-        title: "New Task",
-      } as any);
-    });
+    await result.current.handleCreate({
+      title: "New Task"
+    } as any);
 
-    expect(result.current.tasks[0].title).toBe("New Task");
+    await waitFor(() => {
+      expect(result.current.tasks.length).toBe(1);
+    });
   });
 
   it("should update status", async () => {
-    (api.fetchTasks as any).mockResolvedValue([
-      { id: 1, title: "Task", status: "pending" },
-    ]);
+    mockedApi.fetchTasks.mockResolvedValue({
+      data: [{ id: 1, title: "Task 1", status: "todo" }],
+      total: 1,
+      limit: 5,
+      offset: 0
+    });
 
-    (api.updateTaskStatus as any).mockResolvedValue({
-      id: 1,
-      status: "done",
+    mockedApi.updateTaskStatus.mockResolvedValue({
+      data: { id: 1, title: "Task 1", status: "done" }
     });
 
     const { result } = renderHook(() => useTasks());
 
-    await act(async () => {
-      await result.current.handleUpdateStatus(1, "done");
+    await result.current.handleUpdateStatus(1, "done");
+
+    await waitFor(() => {
+      expect(result.current.tasks[0].status).toBe("done");
     });
-
-    expect(result.current.tasks[0].status).toBe("done");
   });
-
 });

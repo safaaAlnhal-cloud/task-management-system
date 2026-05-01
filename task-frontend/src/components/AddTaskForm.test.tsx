@@ -2,9 +2,6 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
 import { AddTaskForm } from "./AddTaskForm";
 
-/**
- * 🔥 mock navigate
- */
 vi.mock("react-router-dom", () => ({
   useNavigate: () => vi.fn(),
 }));
